@@ -12,7 +12,7 @@ def get_today():
     return date.today().isoformat()
 
 
-# 🔥 check + 預扣（核心）
+# 🔥 check + 預扣（修正版）
 async def check_and_reserve(ip: str, duration_minutes: float):
     if duration_minutes > MAX_SINGLE_FILE_MINUTES:
         raise HTTPException(status_code=400, detail="單次上傳超過 5 分鐘限制")
@@ -22,23 +22,23 @@ async def check_and_reserve(ip: str, duration_minutes: float):
 
     # ===== Global =====
     global_res = supabase.table("demo_global_usage") \
-        .select("*") \
+        .select("total_minutes_used") \
         .eq("date", today) \
         .execute()
 
-    total_used = global_res.data[0]["total_minutes_used"] if global_res.data else 0
+    total_used = sum(row["total_minutes_used"] for row in global_res.data) if global_res.data else 0
 
     if total_used + duration_minutes > GLOBAL_LIMIT:
         raise HTTPException(status_code=429, detail="今日全站使用量已達上限")
 
     # ===== IP =====
     ip_res = supabase.table("demo_ip_usage") \
-        .select("*") \
+        .select("minutes_used") \
         .eq("date", today) \
         .eq("ip", ip) \
         .execute()
 
-    ip_used = ip_res.data[0]["minutes_used"] if ip_res.data else 0
+    ip_used = sum(row["minutes_used"] for row in ip_res.data) if ip_res.data else 0
 
     if ip_used + duration_minutes > IP_LIMIT:
         raise HTTPException(status_code=429, detail="此 IP 今日使用量已達上限")
