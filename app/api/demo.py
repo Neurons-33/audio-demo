@@ -125,7 +125,7 @@ async def get_usage(request: Request):
 # =========================
 # upload（🔥核心）
 # =========================
-@router.post("/api/upload")
+@router.post("/api/upload", response_model=None)
 @limiter.limit("5/minute")
 async def upload_audio(
     request: Request,
