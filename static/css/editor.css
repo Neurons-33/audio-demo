@@ -1,0 +1,62 @@
+.subtitle-item {
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.subtitle-item:focus-within {
+    background: rgba(255, 255, 255, 0.12);
+    border-left: 4px solid #ffffff;
+    transform: translateX(4px);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.add-segment-btn {
+    opacity: 0;
+    transition: all 0.2s;
+    height: 12px;
+    margin: -6px 0;
+    z-index: 30;
+    position: relative;
+}
+
+.add-segment-btn:hover {
+    opacity: 1;
+    height: 32px;
+    margin: 8px 0;
+}
+
+.time-input {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    padding: 2px 6px;
+    text-align: center;
+    font-family: 'Courier New', Courier, monospace;
+    width: 90px;
+    outline: none;
+    color: #fff;
+    font-size: 0.75rem;
+    transition: border-color 0.2s;
+}
+
+.time-input:focus {
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+#subtitle-overlay {
+    position: absolute;
+    bottom: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    text-align: center;
+    pointer-events: none;
+    z-index: 50;
+    color: white;
+    font-size: 1.25rem;
+    font-weight: 500;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8), 0 0 10px rgba(0,0,0,0.5);
+    line-height: 1.4;
+    transition: opacity 0.2s ease;
+}

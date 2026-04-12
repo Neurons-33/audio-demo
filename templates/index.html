@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 音訊轉錄工作站 - 專業動態版</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/background.css">
+    <link rel="stylesheet" href="/static/css/editor.css">
+</head>
+
+<body class="min-h-screen">
+
+    <!-- 動態背景 -->
+    <div class="dynamic-bg-container">
+        <div class="layer bg-layer"></div>
+        <div class="layer light-beams"></div>
+        <div class="layer vignette"></div>
+    </div>
+
+    <canvas id="particleCanvas"></canvas>
+
+    <div class="main-ui">
+        <div class="glass-card w-full max-w-7xl min-h-[88vh] flex flex-col md:flex-row overflow-hidden rounded-[2.5rem]">
+
+            <!-- 左側 -->
+            <div class="w-full md:w-1/2 p-4 md:p-8 border-r border-white/5 flex flex-col">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-medium flex items-center gap-2 text-white">
+                        <i data-lucide="video" class="w-5 h-5"></i> 影片預覽
+                    </h2>
+                    <label class="cursor-pointer bg-white/10 hover:bg-white/20 px-4 py-1.5 rounded-full text-sm text-white transition">
+                        選取本地影片
+                        <input type="file" id="video-upload" accept="video/*" class="hidden">
+                    </label>
+                </div>
+
+                <div class="flex-1 bg-black/20 rounded-3xl overflow-hidden flex items-center justify-center relative group border border-white/5">
+                    <video id="preview-video" controls class="w-full h-full object-contain hidden"></video>
+
+                    <div id="subtitle-overlay" class="opacity-0"></div>
+
+                    <div id="video-placeholder" class="text-center text-white opacity-40 group-hover:opacity-70 transition">
+                        <i data-lucide="clapperboard" class="w-16 h-16 mx-auto mb-4"></i>
+                        <p>尚未載入參考影片</p>
+                    </div>
+                </div>
+
+                <div class="mt-6 text-[10px] text-white/30 uppercase tracking-widest text-center font-medium">
+                    Local Preview Only • No Upload To Server
+                </div>
+            </div>
+
+            <!-- 右側 -->
+            <div class="w-full md:w-1/2 p-4 md:p-8 flex flex-col">
+
+                <!-- usage -->
+                <div id="usage-box" class="mb-8 text-sm text-white font-bold opacity-80">
+                    剩餘分鐘載入中...
+                </div>
+
+                <!-- 標題 -->
+                <div class="flex items-center justify-between mb-2">
+                    <h2 class="text-xl font-medium flex items-center gap-2 text-white">
+                        <i data-lucide="type" class="w-5 h-5"></i> 在線編輯
+                    </h2>
+                    <div id="status-badge" class="hidden px-4 py-1.5 bg-white text-black font-bold rounded-full text-[10px] tracking-wider animate-pulse shadow-lg">
+                        <span class="flex items-center gap-2">
+                            <i data-lucide="refresh-cw" class="w-3 h-3 animate-spin"></i>
+                            <span id="status-text">PROCESSING (0%)</span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- 下載說明提示 -->
+                <div class="mb-6 space-y-1 font-bold">
+                    <p class="text-[11px] text-white/60 flex items-center gap-1">
+                        <i data-lucide="info" class="w-3 h-3 text-white/80"></i>
+                        僅供 SRT 字幕檔下載，不包含影片合併功能
+                    </p>
+                    <p class="text-[11px] text-white/60 flex items-center gap-1">
+                        <i data-lucide="info" class="w-3 h-3 text-white/80"></i>
+                        音檔最大限制單次 5 分鐘
+                    </p>
+                </div>
+
+                <!-- 上傳按鈕樣式優化 -->
+                <div class="flex gap-4 mb-6">
+                    <label class="flex-1 flex items-center justify-center gap-3 bg-white/10 backdrop-blur-md text-white font-bold py-3.5 rounded-2xl cursor-pointer hover:bg-white/20 transition active:scale-[0.98] border border-white/20 shadow-xl">
+                        <i data-lucide="upload-cloud" class="w-5 h-5"></i>
+                        <span>開始 ASR 辨識</span>
+                        <input type="file" id="audio-upload" accept="audio/*" class="hidden">
+                    </label>
+
+                    <button id="download-srt" disabled class="bg-white/10 backdrop-blur-md hover:bg-white/20 disabled:opacity-20 px-6 rounded-2xl transition border border-white/10 text-white">
+                        <i data-lucide="download" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <!-- 字幕區 -->
+                <div id="subtitle-list" class="flex-1 overflow-y-auto custom-scroll pr-2 space-y-2 py-4">
+                    <div id="empty-state" class="h-full flex flex-col items-center justify-center text-white opacity-40">
+                        <i data-lucide="file-audio" class="w-12 h-12 mb-4"></i>
+                        <p class="text-sm font-medium">等待音檔載入中...</p>
+                    </div>
+
+                    <div id="loading-state" class="hidden space-y-4">
+                        <div class="h-24 w-full rounded-2xl loading-shimmer opacity-20"></div>
+                        <div class="h-24 w-full rounded-2xl loading-shimmer opacity-20"></div>
+                        <div class="h-24 w-full rounded-2xl loading-shimmer opacity-20"></div>
+                    </div>
+                </div>
+
+                <!-- footer -->
+                <div class="mt-4 pt-4 border-t border-white/10 flex justify-between items-center text-[11px] text-white/50 font-bold tracking-wider">
+                    <span id="segment-count">0 SEGMENTS</span>
+                    <span id="save-status" class="flex items-center gap-2">
+                        <i data-lucide="check-circle" class="w-3 h-3 text-emerald-400"></i>
+                        SYNCED
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 自定義錯誤彈窗 -->
+    <div id="custom-alert" class="hidden fixed inset-0 z-[999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+        <div class="bg-[#1a1a1a]/70 border border-white/10 p-10 rounded-[2.5rem] max-w-sm w-full text-center shadow-2xl transition-all duration-300 scale-95" id="alert-card">
+            <div class="flex justify-center mb-6">
+                <div class="p-5 bg-red-500/10 rounded-3xl border border-red-500/20" id="alert-icon-container">
+                    <!-- 圖示由 JS 動態注入 -->
+                </div>
+            </div>
+            <h4 class="text-white font-bold text-xl mb-3" id="alert-title">額度限制</h4>
+            <p class="text-white/50 text-sm mb-8 leading-relaxed px-4" id="alert-content"></p>
+            <button onclick="document.getElementById('custom-alert').classList.add('hidden')" 
+                    class="w-full py-4 bg-white text-black font-extrabold rounded-2xl hover:bg-neutral-200 transition-all active:scale-95 shadow-lg">
+                我知道了
+            </button>
+        </div>
+    </div>
+
+    <!-- 載入主程式 -->
+    <script type="module" src="/static/js/main.js"></script>
+
+    <!-- UI 控制邏輯：處理不同類型的錯誤提示 -->
+    <script>
+        window.showLimitError = function(message) {
+            const modal = document.getElementById('custom-alert');
+            const card = document.getElementById('alert-card');
+            const title = document.getElementById('alert-title');
+            const content = document.getElementById('alert-content');
+            const iconContainer = document.getElementById('alert-icon-container');
+
+            if (!modal || !content) return;
+
+            content.innerText = message;
+            
+            // 根據關鍵字切換圖示與標題
+            if (message.includes('全站')) {
+                title.innerText = '系統公告';
+                iconContainer.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19.5h-11a3.5 3.5 0 0 1 0-7h.5a8.5 8.5 0 0 1 15 2.5a4 4 0 0 1-4.5 4.5z"/><path d="m12 11l0 4"/><path d="m12 18l0 0"/></svg>`;
+            } else if (message.includes('5 分鐘')) {
+                title.innerText = '檔案長度限制';
+                // 使用時鐘圖示 (lucide-clock)
+                iconContainer.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`;
+            } else {
+                title.innerText = '個人額度限制';
+                iconContainer.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
+            }
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                card.classList.replace('scale-95', 'scale-100');
+            }, 10);
+        };
+    </script>
+
+</body>
+</html>

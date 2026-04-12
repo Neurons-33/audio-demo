@@ -1,0 +1,16 @@
+export const dom = {
+    canvas: document.getElementById('particleCanvas'),
+    videoElement: document.getElementById('preview-video'),
+    videoPlaceholder: document.getElementById('video-placeholder'),
+    subtitleOverlay: document.getElementById('subtitle-overlay'),
+    subtitleList: document.getElementById('subtitle-list'),
+    emptyState: document.getElementById('empty-state'),
+    loadingState: document.getElementById('loading-state'),
+    downloadBtn: document.getElementById('download-srt'),
+    audioUpload: document.getElementById('audio-upload'),
+    videoUpload: document.getElementById('video-upload'),
+    segmentCountLabel: document.getElementById('segment-count'),
+    statusBadge: document.getElementById('status-badge'),
+    statusText: document.getElementById('status-text'),
+    saveStatus: document.getElementById('save-status'),
+};
