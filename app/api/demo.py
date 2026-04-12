@@ -53,7 +53,10 @@ def verify_api_key(x_api_key: str = Header(default=None)):
 # =========================
 
 def get_user_id(request: Request):
-    return request.headers.get("x-user-id") or "anonymous"
+    forwarded = request.headers.get("x-forwarded-for")
+    if forwarded:
+        return forwarded.split(",")[0].strip()
+    return request.client.host
 
 
 # =========================
