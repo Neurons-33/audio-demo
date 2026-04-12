@@ -1,4 +1,3 @@
-from __future__ import annotations
 from datetime import date
 
 from fastapi import APIRouter, File, HTTPException, Request, UploadFile, Depends, Header
@@ -25,7 +24,7 @@ from app.services.transcript_service import save_transcript
 
 
 # =========================
-# 🔥 基礎設定
+# 基礎設定
 # =========================
 
 router = APIRouter()
@@ -38,13 +37,13 @@ limiter = Limiter(key_func=get_remote_address)
 
 
 # =========================
-# 🔐 API KEY（最小門）
+# API KEY
 # =========================
 
-DEMO_API_KEY = "your-secret-key"  # ← 自己改
+DEMO_API_KEY = "your-secret-key"
 
 
-def verify_api_key(x_api_key: str = Header(None)):
+def verify_api_key(x_api_key: str = Header(default=None)):
     if x_api_key != DEMO_API_KEY:
         raise HTTPException(status_code=403, detail="Forbidden")
 
@@ -52,13 +51,15 @@ def verify_api_key(x_api_key: str = Header(None)):
 # =========================
 # user system
 # =========================
-def get_user_id(request: Request) -> str:
+
+def get_user_id(request: Request):
     return request.headers.get("x-user-id") or "anonymous"
 
 
 # =========================
 # 支援格式
 # =========================
+
 ALLOWED_AUDIO_TYPES = {
     "audio/mpeg",
     "audio/mp3",
@@ -76,7 +77,8 @@ ALLOWED_AUDIO_TYPES = {
 # =========================
 # 音檔長度
 # =========================
-def get_audio_duration_seconds(file_path: str) -> float:
+
+def get_audio_duration_seconds(file_path: str):
     cmd = [
         "ffprobe",
         "-v", "error",
@@ -92,14 +94,16 @@ def get_audio_duration_seconds(file_path: str) -> float:
 # =========================
 # 頁面
 # =========================
+
 @router.get("/", response_class=HTMLResponse)
 async def index(request: Request):
-    return templates.TemplateResponse(request, "index.html", {"request": request})
+    return templates.TemplateResponse("index.html", {"request": request})
 
 
 # =========================
 # usage
 # =========================
+
 @router.get("/api/usage")
 async def get_usage(request: Request):
     user = get_user_id(request)
@@ -123,8 +127,9 @@ async def get_usage(request: Request):
 
 
 # =========================
-# upload（🔥核心）
+# upload（核心）
 # =========================
+
 @router.post("/api/upload", response_model=None)
 @limiter.limit("5/minute")
 async def upload_audio(
@@ -142,6 +147,8 @@ async def upload_audio(
 
     audio_bytes = await file.read()
 
+    tmp_path = None
+
     try:
         wav_bytes = convert_to_wav_bytes(audio_bytes)
 
@@ -152,10 +159,10 @@ async def upload_audio(
         duration_seconds = get_audio_duration_seconds(tmp_path)
         duration_minutes = int(duration_seconds / 60) + 1
 
-        # 🔥 1️⃣ 先扣額（關鍵）
+        # 🔥 預扣
         await check_and_reserve(user, duration_minutes)
 
-        # 🔥 2️⃣ 再執行（才會花錢）
+        # 🔥 呼叫 ASR
         dg_result = await transcribe_audio_bytes(
             audio_bytes=wav_bytes,
             mimetype="audio/wav",
@@ -164,10 +171,10 @@ async def upload_audio(
 
         segments = build_segments_from_deepgram(dg_result)
 
-        # 🔥 3️⃣ 儲存
+        # 🔥 儲存
         await save_transcript(user, duration_minutes, segments)
 
-        # 🔥 4️⃣ log（可選）
+        # 🔥 log
         await record_usage_log(user, duration_minutes)
 
         return {
@@ -176,8 +183,8 @@ async def upload_audio(
         }
 
     except Exception as exc:
-        raise HTTPException(500, f"轉錄失敗: {str(exc)}")
+        raise HTTPException(status_code=500, detail=f"轉錄失敗: {str(exc)}")
 
     finally:
-        if 'tmp_path' in locals() and os.path.exists(tmp_path):
+        if tmp_path and os.path.exists(tmp_path):
             os.remove(tmp_path)
