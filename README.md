@@ -26,7 +26,7 @@ https://neurons33-audio-demo.hf.space
 ###  網頁介面
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/8501f246-e209-4044-bd15-8dd78e28e75e" width="720">
+  <img src="https://fengyun3999.sirv.com/html.png" width="720">
 </p>
 
 ---
@@ -34,7 +34,7 @@ https://neurons33-audio-demo.hf.space
 ###  手機介面
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/7b6371d6-eff5-4be9-a83e-dee9b8961205" width="320">
+  <img src="https://fengyun3999.sirv.com/IMG_2950.jpeg" width="320">
 </p>
 
 ---
