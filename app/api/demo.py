@@ -137,8 +137,7 @@ async def get_usage(request: Request):
 @limiter.limit("5/minute")
 async def upload_audio(
     request: Request,
-    file: UploadFile = File(...),
-    _: None = Depends(verify_api_key)
+    file: UploadFile = File(...)
 ):
     user = get_user_id(request)
 
