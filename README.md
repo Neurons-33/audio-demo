@@ -163,6 +163,7 @@ docker run -p 8000:8000 audio-demo
 ```
 SUPABASE_URL=你的網址
 SUPABASE_ANON_KEY=你的金鑰
+DEEPGRAM_API_KEY=你的金鑰
 ```
 
 ---
