@@ -34,7 +34,7 @@ https://neurons33-audio-demo.hf.space
 ###  手機介面
 
 <p align="center">
-  <img src="https://fengyun3999.sirv.com/IMG_2950.jpeg" width="320">
+  <img src="https://fengyun3999.sirv.com/phong.png" width="320">
 </p>
 
 ---
