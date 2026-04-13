@@ -44,7 +44,7 @@ pinned: false
 ###  手機介面
 
 <p align="center">
-  <img src="https://fengyun3999.sirv.com/phong.png" width="320">
+  <img src="https://fengyun3999.sirv.com/phong.png" width="330">
 </p>
 
 ---
