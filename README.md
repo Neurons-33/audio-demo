@@ -7,14 +7,17 @@ sdk: docker
 pinned: false
 ---
 
-#  Audio Demo — AI 字幕生成 SaaS 原型
+#  Audio Demo — AI Workflow System
 
-一個以 **FastAPI + ASR 語音轉文字流程 + Supabase** 建構的 AI 字幕生成系統原型。
-此專案重點不在單點功能，而在於展示 **從前端互動到後端處理的完整系統流程**。
+此專案的核心不是單純的語音轉文字工具，而是一套 AI workflow 系統，用來將原始語音轉換為「可編輯、可使用」的內容。
+
+在實際場景中，語音轉文字只是第一步，真正困難的是後續的整理、斷句與結構化。因此本專案將整個流程拆解為多個可控步驟，使原本依賴人工處理的流程能被系統化與優化。
+
+本系統的目標不是產生文字，而是將語音資料轉化為可直接使用的工作輸出。
 
 ---
 
-##  Demo展示
+##  網頁連結
 
  Hugging Face 部署
 https://neurons33-audio-demo.hf.space
@@ -39,11 +42,11 @@ https://neurons33-audio-demo.hf.space
 
 ---
 
-##  專案核心
+##  Workflow流程
 
-* 使用者實際操作流程（上傳 → 處理 → 顯示）
-* API 設計與後端協調
-* 可部署的系統架構（Docker + 雲端）
+<p align="center">
+  <img src="https://fengyun3999.sirv.com/workflow.png" width="320">
+</p>
 
 ---
 
