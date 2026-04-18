@@ -11,6 +11,9 @@ import {
 } from './state.js';
 import { renderSubtitles } from './renderer.js';
 import { buildSrt } from './utils.js';
+import { trackUmami } from "./umami.js";
+
+
 
 /* =========================
 🔥 USER SYSTEM (修正 UUID 相容性)
@@ -202,12 +205,13 @@ function bindAudioUpload() {
                 method: "POST",
                 body: formData
             });
-
+            trackUmami("upload_audio");
             const data = await res.json();
 
             setSubtitles(data.segments || []);
             stopSimulatedProgress();
             renderSubtitles();
+            trackUmami("generate_srt");
 
             await refreshUsage();
             // await loadHistory(); // 配合你的 UI 修改
@@ -230,6 +234,7 @@ function bindAudioUpload() {
 ========================= */
 function bindDownload() {
     dom.downloadBtn.addEventListener('click', () => {
+        trackUmami("download_srt");
         const srt = buildSrt(getSubtitles());
         const blob = new Blob([srt], { type: 'text/plain' });
         const a = document.createElement('a');
