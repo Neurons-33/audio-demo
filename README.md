@@ -9,10 +9,14 @@ pinned: false
 
 #  Audio Demo — AI Workflow System
 
-Article: [Read on Medium](https://medium.com/@fengyun3999/%E7%82%BA%E4%BB%80%E9%BA%BC%E8%AA%9E%E9%9F%B3%E8%BD%89%E6%96%87%E5%AD%97%E4%B8%8D%E7%AD%89%E6%96%BC%E5%AD%97%E5%B9%95-67a98df67dea)
-
 > 語音轉文字不等於字幕。
 > 這個專案在解的是：如何讓語音資料變成可用內容。
+
+---
+
+Article: [Read on Medium](https://medium.com/@fengyun3999/%E7%82%BA%E4%BB%80%E9%BA%BC%E8%AA%9E%E9%9F%B3%E8%BD%89%E6%96%87%E5%AD%97%E4%B8%8D%E7%AD%89%E6%96%BC%E5%AD%97%E5%B9%95-67a98df67dea)
+
+---
 
 ## 問題定義
 
