@@ -9,6 +9,8 @@ pinned: false
 
 #  Audio Demo — AI Workflow System
 
+Article: [Read on Medium](https://medium.com/@fengyun3999/%E7%82%BA%E4%BB%80%E9%BA%BC%E8%AA%9E%E9%9F%B3%E8%BD%89%E6%96%87%E5%AD%97%E4%B8%8D%E7%AD%89%E6%96%BC%E5%AD%97%E5%B9%95-67a98df67dea)
+
 此專案的核心是建立一套 AI workflow 系統，用來將原始語音轉換為「可編輯、可使用」的內容。
 
 在實際場景中，語音轉文字只是第一步，真正困難的是後續的整理、斷句與結構化。
